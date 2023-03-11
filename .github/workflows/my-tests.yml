@@ -15,5 +15,3 @@ jobs:
       run: make install
     - name: Run linter
       run: make lint
-    - name: Run start
-      run: make start
