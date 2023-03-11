@@ -12,6 +12,8 @@ jobs:
       with:
         php-version: '8.0'
     - name: Run install
+
       run: make install
     - name: Run linter
+    
       run: make lint
