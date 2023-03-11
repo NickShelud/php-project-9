@@ -15,5 +15,8 @@
     ],
     "require-dev": {
         "squizlabs/php_codesniffer": "*"
+    },
+    "require": {
+        "slim/slim": "3.*"
     }
 }
