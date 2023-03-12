@@ -17,6 +17,7 @@
         "squizlabs/php_codesniffer": "*"
     },
     "require": {
-        "slim/slim": "3.*"
+        "slim/slim": "3.*",
+        "twbs/bootstrap": "5.0.1"
     }
 }
