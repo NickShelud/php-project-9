@@ -17,7 +17,11 @@
         "squizlabs/php_codesniffer": "*"
     },
     "require": {
-        "slim/slim": "3.*",
-        "twbs/bootstrap": "5.0.1"
+        "slim/slim": "^4.11",
+        "twbs/bootstrap": "5.0.1",
+        "slim/psr7": "^1.6",
+        "slim/http": "^1.3",
+        "slim/php-view": "^3.2",
+        "php-di/php-di": "^7.0"
     }
 }
