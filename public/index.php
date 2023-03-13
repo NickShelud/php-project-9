@@ -25,4 +25,3 @@ $app->get('/', function ($request, $response) {
 });
 
 $app->run();
-
