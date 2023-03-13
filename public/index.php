@@ -14,9 +14,6 @@ $container = new Container();
 $container->set('renderer', function () {
     return new Slim\Views\PhpRenderer(__DIR__ . '/../templates');
 });
-$container->set('flash', function () {
-    return new Slim\Flash\Messages();
-});
 
 $app = AppFactory::createFromContainer($container);
 $app->add(MethodOverrideMiddleware::class);
@@ -24,6 +21,8 @@ $app->addErrorMiddleware(true, true, true);
 
 
 $app->get('/', function ($request, $response) {
-    $params = [];
-    return $this->get('renderer')->render($response, 'index.phtml', $params);
-})->setName('startPage');
+    return $this->get('renderer')->render($response, 'index.phtml');
+});
+
+$app->run();
+
