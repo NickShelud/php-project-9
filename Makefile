@@ -8,3 +8,9 @@ install:
 
 lint:
 	composer exec --verbose phpcs -- --standard=PSR12 public src
+
+restart:
+	sudo service postgresql restart
+
+psql:
+	psql page_analyzer
