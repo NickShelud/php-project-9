@@ -18,6 +18,7 @@ try {
     $pdo = Connection::get()->connect();
     $tableCreator = new CreateTable($pdo);
     $tables = $tableCreator->createTables();
+    $tablesCheck = $tableCreator->createTableWithChecks();
 } catch (\PDOException $e) {
     echo $e->getMessage();
 }
@@ -30,6 +31,9 @@ $container->set('renderer', function () {
 $container->set('flash', function () {
     return new Slim\Flash\Messages();
 });
+
+$pdo = Connection::get()->connect();
+$dataBase = new PgsqlData($pdo);
 
 $app = AppFactory::createFromContainer($container);
 $app->add(MethodOverrideMiddleware::class);
@@ -65,7 +69,7 @@ $app->get('/', function ($request, $response) use ($router) {
         }
 
         $isertInTable = $dataBase->insertInTable($urls);
-        //Функция insertInTable в классе PgsqlData возвращяет последний id
+
         $id = $dataBase->getLastId();
         var_dump($id);
 
@@ -90,10 +94,13 @@ $app->get('/urls/{id}', function ($request, $response, $args) {
     $pdo = Connection::get()->connect();
     $dataBase = new PgsqlData($pdo);
     $dataFromDB = $dataBase->findUrlForId($args);
+    $dataCheckUrl = $dataBase->selectAllByIdFromCheck($args);
+    //var_dump($dataCheckUrl);
     $params = ['id' => $dataFromDB[0]['id'],
                 'name' => $dataFromDB[0]['name'],
-                'created_at' => $dataFromDB[0]['created_at'],
-                'flash' => $messages['success'][0]];
+                'created_at' => strstr($dataFromDB[0]['created_at'], '.', true),
+                'flash' => $messages['success'][0],
+                'urls' => $dataCheckUrl];
     return $this->get('renderer')->render($response, 'urlsId.phtml', $params);
 })->setName('urlsId');
 
@@ -104,6 +111,25 @@ $app->get('/urls', function ($request, $response) {
     $params = ['data' => $dataFromDB];
     return $this->get('renderer')->render($response, 'urls.phtml', $params);
 })->setName('urls');
+
+$app->post('/urls/{url_id}/checks', function ($request, $response, $args) use ($router) {
+    $url_id = $args['url_id'];
+    $pdo = Connection::get()->connect();
+    $dataBase = new PgsqlData($pdo);
+    $dataBase->insertInTableChecks(['url_id' => $url_id]);
+
+    $id['id'] = $args['url_id'];
+    $dataCheckUrl = $dataBase->selectAllByIdFromCheck($id);
+    $params = ['urls' => $dataCheckUrl];
+
+    $url = $router->urlFor('urlsId', ['id' => $url_id]);
+    $this->get('flash')->addMessage('success', 'Страница успешно проверена');
+    //return $response->withRedirect($url)
+
+    //$this->get('renderer')->render($response, 'urlsId.phtml', $params);
+    return $response->withRedirect($url);
+    //$this->get('renderer')->render($response, 'urlsId.phtml', $params);
+});
 
 //phpinfo();
 $app->run();

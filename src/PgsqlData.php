@@ -47,6 +47,11 @@ class PgsqlData
         return $this->query('INSERT INTO urls(name) VALUES(:name) RETURNING id', $name);
     }
 
+    public function insertInTableChecks($url_id)
+    {
+        return $this->query('INSERT INTO urls_checks(url_id) VALUES(:url_id)', $url_id);
+    }
+
     public function findUrlForId($id)
     {
         return $this->query('SELECT * FROM urls WHERE id = :id', $id);
@@ -54,7 +59,8 @@ class PgsqlData
 
     public function getAll()
     {
-        return $this->query('SELECT * FROM urls');
+        return $this->query('SELECT MAX(urls_checks.created_at), urls.* FROM urls_checks 
+        JOIN urls ON urls_checks.url_id = urls.id GROUP BY urls_checks.url_id, urls.id ORDER BY urls.id DESC');
     }
 
     public function getLastId()
@@ -62,8 +68,18 @@ class PgsqlData
         return $this->query('SELECT MAX(id) FROM urls');
     }
 
+    public function getAllFromChecks()
+    {
+        return $this->query('SELECT * FROM urls_checks');
+    }
+
     public function searchName($name)
     {
         return $this->query('SELECT id FROM urls WHERE name = :name', $name);
+    }
+
+    public function selectAllByIdFromCheck($id)
+    {
+        return $this->query('SELECT * FROM urls_checks WHERE url_id = :id ORDER BY id DESC', $id);
     }
 }

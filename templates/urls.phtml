@@ -30,7 +30,7 @@
                     <tr>
                         <td><?= htmlspecialchars($item['id'])?></td>
                         <td><a href="/urls/<?=(int)$item['id']?>"><?= htmlspecialchars($item['name'])?></a></td>
-                        <td></td>
+                        <td><?= htmlspecialchars(strstr($item['max'], '.', true))?></td>
                         <td></td>
                     </tr>
                 <?php endforeach ?>

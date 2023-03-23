@@ -15,9 +15,9 @@
           <a href="/urls" class="text-white-50 nav-link p-2 ">Сайты</a>
       </div>
       </nav>
-      <div>
-      <div class="alert alert-success"><?= htmlspecialchars($flash) ?></div>
-      </div>
+      <?php if(isset($flash)): ?>
+        <div class="alert alert-success"><?= htmlspecialchars($flash) ?></div>
+        <?php endif ?>
       <main class="container mt-3">
         <p class="h1">Сайт: <?= htmlspecialchars($name) ?></p>
         <table class="table table-hover table-bordered" data-test="url">
@@ -38,7 +38,7 @@
         </table>
 
         <h2 class="mt-5 mb-3">Проверки</h2>
-        <form action="" class="mb-3">
+        <form action="/urls/<?= htmlspecialchars($id) ?>/checks" class="mb-3" method="post">
             <button class="btn btn-primary">Запустить проверку</button>
         </form>
         <table class="table table-hover table-bordered" data-test="checks">
@@ -50,6 +50,16 @@
                 <th>description</th>
                 <th>Дата создания</th>
             </tr>
+            <?php foreach ($urls as $item): ?>
+                    <tr>
+                        <td><?= htmlspecialchars($item['id'])?></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td><?= htmlspecialchars(strstr($item['created_at'], '.', true)) ?></td>
+                    </tr>
+            <?php endforeach ?>
         </table>
       </main>
 </body>
