@@ -13,12 +13,14 @@
           <a href="/" class="navbar-brand text-light">Анализатор страниц</a>
           <a href="/" class="text-white-50 nav-link p-2">Главная</a>
           <a href="/urls" class="text-white-50 nav-link p-2 ">Сайты</a>
-      </div>
-      </nav>
-      <?php if(isset($flash)): ?>
-        <div class="alert alert-success"><?= htmlspecialchars($flash) ?></div>
+        </div>
+        </nav>
+        <?php if(isset($flash['success'][0])): ?>
+            <div class="alert alert-success"><?= htmlspecialchars($flash['success'][0]) ?></div>
+        <?php elseif(isset($flash['failure'][0])): ?>
+            <div class="alert alert-danger"><?= htmlspecialchars($flash['failure'][0]) ?></div>
         <?php endif ?>
-      <main class="container mt-3">
+    <main class="container mt-3">
         <p class="h1">Сайт: <?= htmlspecialchars($name) ?></p>
         <table class="table table-hover table-bordered" data-test="url">
           <tbody>
@@ -53,7 +55,7 @@
             <?php foreach ($urls as $item): ?>
                     <tr>
                         <td><?= htmlspecialchars($item['id'])?></td>
-                        <td></td>
+                        <td><?= htmlspecialchars($item['status_code'])?></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -61,6 +63,6 @@
                     </tr>
             <?php endforeach ?>
         </table>
-      </main>
+    </main>
 </body>
 </html>

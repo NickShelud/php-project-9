@@ -11,6 +11,10 @@ use Hexlet\Code\CreateTable;
 use Hexlet\Code\PgsqlData;
 use Slim\Flash\Messages;
 use Valitron\Validator;
+use GuzzleHttp\Client;
+use GuzzleHttp\Psr7;
+use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\TransferException;
 
 session_start();
 
@@ -91,15 +95,16 @@ $app->get('/', function ($request, $response) use ($router) {
 $app->get('/urls/{id}', function ($request, $response, $args) {
     $id = $args['id'];
     $messages = $messages = $this->get('flash')->getMessages();
+
     $pdo = Connection::get()->connect();
     $dataBase = new PgsqlData($pdo);
     $dataFromDB = $dataBase->findUrlForId($args);
     $dataCheckUrl = $dataBase->selectAllByIdFromCheck($args);
-    //var_dump($dataCheckUrl);
+
     $params = ['id' => $dataFromDB[0]['id'],
                 'name' => $dataFromDB[0]['name'],
                 'created_at' => strstr($dataFromDB[0]['created_at'], '.', true),
-                'flash' => $messages['success'][0],
+                'flash' => $messages,
                 'urls' => $dataCheckUrl];
     return $this->get('renderer')->render($response, 'urlsId.phtml', $params);
 })->setName('urlsId');
@@ -116,20 +121,22 @@ $app->post('/urls/{url_id}/checks', function ($request, $response, $args) use ($
     $url_id = $args['url_id'];
     $pdo = Connection::get()->connect();
     $dataBase = new PgsqlData($pdo);
-    $dataBase->insertInTableChecks(['url_id' => $url_id]);
 
-    $id['id'] = $args['url_id'];
-    $dataCheckUrl = $dataBase->selectAllByIdFromCheck($id);
-    $params = ['urls' => $dataCheckUrl];
+    $checkUrl['url_id'] = $args['url_id'];
+    $client = new Client();
+    $name = $dataBase->selectNameByIdFromUrls($checkUrl);
+
+    try {
+        $res = $client->request('GET', $name[0]['name']);
+        $checkUrl['status'] = $res->getStatusCode();
+        $this->get('flash')->addMessage('success', 'Страница успешно проверена');
+        $dataBase->insertInTableChecks($checkUrl);
+    } catch (TransferException $e) {
+        $this->get('flash')->addMessage('failure', 'Произошла ошибка при проверке, не удалось подключиться');
+    }
 
     $url = $router->urlFor('urlsId', ['id' => $url_id]);
-    $this->get('flash')->addMessage('success', 'Страница успешно проверена');
-    //return $response->withRedirect($url)
-
-    //$this->get('renderer')->render($response, 'urlsId.phtml', $params);
     return $response->withRedirect($url);
-    //$this->get('renderer')->render($response, 'urlsId.phtml', $params);
 });
 
-//phpinfo();
 $app->run();
