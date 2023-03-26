@@ -31,7 +31,7 @@ final class Connection
             $params['passw'] = isset($databaseUrl['pass']) ? $databaseUrl['pass'] : null;
         } else {
             $params = parse_ini_file('database.ini');
-
+        }
         if ($params === false) {
             throw new \Exception("Error reading database configuration file");
         }
