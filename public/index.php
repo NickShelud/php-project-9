@@ -73,7 +73,7 @@ $app->get('/', function ($request, $response) use ($router) {
             $this->get('flash')->addMessage('success', 'Страница уже существует');
             return $response->withRedirect($url);
         }
-        $urls['time'] = ("%s", Carbon::now());
+        $urls['time'] = Carbon::now();
         $isertInTable = $dataBase->insertInTable($urls);
 
         $id = $dataBase->getLastId();
@@ -105,7 +105,7 @@ $app->get('/urls/{id}', function ($request, $response, $args) {
 
     $params = ['id' => $dataFromDB[0]['id'],
                 'name' => $dataFromDB[0]['name'],
-                'created_at' => strstr($dataFromDB[0]['created_at'], '.', true),
+                'created_at' => $dataFromDB[0]['created_at'],
                 'flash' => $messages,
                 'urls' => $dataCheckUrl];
     return $this->get('renderer')->render($response, 'urlsId.phtml', $params);
@@ -155,7 +155,7 @@ $app->post('/urls/{url_id}/checks', function ($request, $response, $args) use ($
         $res = $client->request('GET', $name[0]['name']);
         $checkUrl['status'] = $res->getStatusCode();
         $this->get('flash')->addMessage('success', 'Страница успешно проверена');
-        $checkUrl['time'] = ("%s", Carbon::now());
+        $checkUrl['time'] = Carbon::now();
         $dataBase->insertInTableChecks($checkUrl);
     } catch (TransferException $e) {
         $this->get('flash')->addMessage('failure', 'Произошла ошибка при проверке, не удалось подключиться');

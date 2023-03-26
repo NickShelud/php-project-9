@@ -61,7 +61,7 @@
                         <td><?= htmlspecialchars($item['h1'])?></td>
                         <td><?= htmlspecialchars($item['title'])?></td>
                         <td><?= htmlspecialchars($item['description'])?></td>
-                        <td><?= htmlspecialchars(strstr($item['created_at'], '.', true)) ?></td>
+                        <td><?= htmlspecialchars($item['created_at']) ?></td>
                     </tr>
             <?php endforeach ?>
         </table>

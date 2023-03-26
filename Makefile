@@ -13,4 +13,4 @@ restart:
 	sudo service postgresql restart
 
 psql:
-	psql page_analyzer-9
+	psql php_project_9
