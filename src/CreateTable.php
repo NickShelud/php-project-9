@@ -30,7 +30,7 @@ class CreateTable
         $sql = 'CREATE TABLE IF NOT EXISTS urls (
                    id bigint PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
                    name varchar(255),
-                   created_at timestamp default current_timestamp
+                   created_at timestamp
         );';
 
         $this->pdo->exec($sql);
@@ -47,7 +47,7 @@ class CreateTable
             h1 varchar(255),
             title varchar(255),
             description varchar(255),
-            created_at timestamp default current_timestamp
+            created_at timestamp
         );';
 
         $this->pdo->exec($sql);
