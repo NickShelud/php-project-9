@@ -56,9 +56,9 @@
                     <tr>
                         <td><?= htmlspecialchars($item['id'])?></td>
                         <td><?= htmlspecialchars($item['status_code'])?></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                        <td><?= htmlspecialchars($item['h1'])?></td>
+                        <td><?= htmlspecialchars($item['title'])?></td>
+                        <td><?= htmlspecialchars($item['description'])?></td>
                         <td><?= htmlspecialchars(strstr($item['created_at'], '.', true)) ?></td>
                     </tr>
             <?php endforeach ?>

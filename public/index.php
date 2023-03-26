@@ -15,6 +15,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Psr7;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\TransferException;
+use DiDom\Document;
 
 session_start();
 
@@ -125,6 +126,29 @@ $app->post('/urls/{url_id}/checks', function ($request, $response, $args) use ($
     $checkUrl['url_id'] = $args['url_id'];
     $client = new Client();
     $name = $dataBase->selectNameByIdFromUrls($checkUrl);
+
+    $document = new Document($name[0]['name'], true);
+    $title = optional($document->find('title')[0])->text();
+    $h1 = optional($document->find('h1')[0])->text();
+    $meta = optional($document->first('meta[name="description"]'))->getAttribute('content');
+
+    if($title !== null) {
+        $checkUrl['title'] = $title;
+    } else {
+        $checkUrl['title'] = '';
+    }
+
+    if($h1 !== null) {
+        $checkUrl['h1'] = $h1;
+    } else {
+        $checkUrl['h1'] = '';
+    }
+
+    if ($meta !== null) {
+        $checkUrl['meta'] = $meta;
+    } else {
+        $checkUrl['meta'] = '';
+    }
 
     try {
         $res = $client->request('GET', $name[0]['name']);
