@@ -132,13 +132,13 @@ $app->post('/urls/{url_id}/checks', function ($request, $response, $args) use ($
     $h1 = optional($document->find('h1')[0])->text();
     $meta = optional($document->first('meta[name="description"]'))->getAttribute('content');
 
-    if($title !== null) {
+    if ($title !== null) {
         $checkUrl['title'] = $title;
     } else {
         $checkUrl['title'] = '';
     }
 
-    if($h1 !== null) {
+    if ($h1 !== null) {
         $checkUrl['h1'] = $h1;
     } else {
         $checkUrl['h1'] = '';
