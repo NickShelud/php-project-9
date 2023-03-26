@@ -44,13 +44,13 @@ class PgsqlData
 
     public function insertInTable($name)
     {
-        return $this->query('INSERT INTO urls(name) VALUES(:name) RETURNING id', $name);
+        return $this->query('INSERT INTO urls(name, created_at) VALUES(:name, :time) RETURNING id', $name);
     }
 
     public function insertInTableChecks($url_id)
     {
-        return $this->query('INSERT INTO urls_checks(url_id, status_code, title, h1, description) 
-        VALUES(:url_id, :status, :title, :h1, :meta)', $url_id);
+        return $this->query('INSERT INTO urls_checks(url_id, status_code, title, h1, description, created_at) 
+        VALUES(:url_id, :status, :title, :h1, :meta, :time)', $url_id);
     }
 
     public function findUrlForId($id)

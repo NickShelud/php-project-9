@@ -30,6 +30,7 @@
         "slim/flash": "^0.4.0",
         "laracasts/flash": "^3.2",
         "guzzlehttp/guzzle": "^7.0",
-        "imangazaliev/didom": "^2.0"
+        "imangazaliev/didom": "^2.0",
+        "nesbot/carbon": "^2.66"
     }
 }

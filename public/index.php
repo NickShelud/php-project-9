@@ -16,6 +16,7 @@ use GuzzleHttp\Psr7;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\TransferException;
 use DiDom\Document;
+use Carbon\Carbon;
 
 session_start();
 
@@ -72,7 +73,7 @@ $app->get('/', function ($request, $response) use ($router) {
             $this->get('flash')->addMessage('success', 'Страница уже существует');
             return $response->withRedirect($url);
         }
-
+        $urls['time'] = ("%s", Carbon::now());
         $isertInTable = $dataBase->insertInTable($urls);
 
         $id = $dataBase->getLastId();
@@ -154,6 +155,7 @@ $app->post('/urls/{url_id}/checks', function ($request, $response, $args) use ($
         $res = $client->request('GET', $name[0]['name']);
         $checkUrl['status'] = $res->getStatusCode();
         $this->get('flash')->addMessage('success', 'Страница успешно проверена');
+        $checkUrl['time'] = ("%s", Carbon::now());
         $dataBase->insertInTableChecks($checkUrl);
     } catch (TransferException $e) {
         $this->get('flash')->addMessage('failure', 'Произошла ошибка при проверке, не удалось подключиться');
