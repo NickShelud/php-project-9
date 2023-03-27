@@ -23,6 +23,7 @@ final class Connection
         if (getenv('DATABASE_URL')) {
             $databaseUrl = parse_url(getenv('DATABASE_URL'));
         }
+        $databaseUrl = parse_url(getenv('DATABASE_URL'));
         if (isset($databaseUrl['host'])) {
             $params['host'] = $databaseUrl['host'];
             $params['port'] = isset($databaseUrl['port']) ? $databaseUrl['port'] : null;
