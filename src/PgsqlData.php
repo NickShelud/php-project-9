@@ -60,7 +60,9 @@ class PgsqlData
 
     public function getAll()
     {
-        return $this->query('SELECT MAX(urls_checks.created_at) AS created_at, urls_checks.status_code, urls.id, urls.name FROM urls_checks 
+        return $this->query('
+        SELECT MAX(urls_checks.created_at) AS created_at, urls_checks.status_code, urls.id, urls.name 
+        FROM urls_checks 
         JOIN urls ON urls_checks.url_id = urls.id 
         GROUP BY urls_checks.url_id, urls.id, urls_checks.status_code 
         ORDER BY urls.id DESC');
