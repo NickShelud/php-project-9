@@ -15,3 +15,5 @@ jobs:
       run: make install
     - name: Run linter
       run: make lint
+    - name: make restart
+      run: make restart
