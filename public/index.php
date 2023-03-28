@@ -61,7 +61,7 @@ $app->get('/', function ($request, $response) use ($router) {
     $error = [];
 
     if (isset($urls['name'])) {
-        $name = $url['name'];
+        $name = $urls['name'];
     } else {
         $name = '';
     }
