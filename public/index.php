@@ -89,7 +89,6 @@ $app->post('/urls', function ($request, $response) use ($router) {
         $urls['name'] = $parseUrl['scheme'] . '://' . $parseUrl['host'];
 
         $serachName = $dataBase->searchName($urls);
-        var_dump($serachName);
 
         if (count($serachName) !== 0) {
             $url = $router->urlFor('urlsId', ['id' => $serachName[0]['id']]);
