@@ -132,6 +132,18 @@ $app->post('/urls/{url_id}/checks', function ($request, $response, $args) use ($
     $client = new Client();
     $name = $dataBase->selectNameByIdFromUrls($checkUrl);
 
+    try {
+        $res = $client->request('GET', $name[0]['name']);
+        $checkUrl['status'] = $res->getStatusCode();
+        $this->get('flash')->addMessage('success', 'Страница успешно проверена');
+        $checkUrl['time'] = Carbon::now();
+        $dataBase->insertInTableChecks($checkUrl);
+    } catch (TransferException $e) {
+        $this->get('flash')->addMessage('failure', 'Произошла ошибка при проверке, не удалось подключиться');
+        $url = $router->urlFor('urlsId', ['id' => $url_id]);
+        return $response->withRedirect($url);
+    }
+
     $document = new Document($name[0]['name'], true);
     $title = optional($document->find('title')[0])->text();
     $h1 = optional($document->find('h1')[0])->text();
@@ -153,16 +165,6 @@ $app->post('/urls/{url_id}/checks', function ($request, $response, $args) use ($
         $checkUrl['meta'] = $meta;
     } else {
         $checkUrl['meta'] = '';
-    }
-
-    try {
-        $res = $client->request('GET', $name[0]['name']);
-        $checkUrl['status'] = $res->getStatusCode();
-        $this->get('flash')->addMessage('success', 'Страница успешно проверена');
-        $checkUrl['time'] = Carbon::now();
-        $dataBase->insertInTableChecks($checkUrl);
-    } catch (TransferException $e) {
-        $this->get('flash')->addMessage('failure', 'Произошла ошибка при проверке, не удалось подключиться');
     }
 
     $url = $router->urlFor('urlsId', ['id' => $url_id]);
