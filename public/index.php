@@ -55,25 +55,41 @@ $app->get('/router', function ($request, $response) use ($router) {
 });
 
 $app->get('/', function ($request, $response) use ($router) {
-    $urls = $request->getQueryParam('url');
+    $params = [];
+    return $this->get('renderer')->render($response, 'index.phtml', $params);
+})->setName('/');
+
+$app->get('/urls/{id}', function ($request, $response, $args) {
+    $id = $args['id'];
+    $messages = $messages = $this->get('flash')->getMessages();
+
+    $pdo = Connection::get()->connect();
+    $dataBase = new PgsqlData($pdo);
+    $dataFromDB = $dataBase->findUrlForId($args);
+    $dataCheckUrl = $dataBase->selectAllByIdFromCheck($args);
+
+    $params = ['id' => $dataFromDB[0]['id'],
+                'name' => $dataFromDB[0]['name'],
+                'created_at' => $dataFromDB[0]['created_at'],
+                'flash' => $messages,
+                'urls' => $dataCheckUrl];
+    return $this->get('renderer')->render($response, 'urlsId.phtml', $params);
+})->setName('urlsId');
+
+$app->post('/urls', function ($request, $response) use ($router) {
+    $urls = $request->getParsedBodyParam('url');
     $pdo = Connection::get()->connect();
     $dataBase = new PgsqlData($pdo);
     $error = [];
 
-    if (isset($urls['name'])) {
-        $name = $urls['name'];
-    } else {
-        $name = '';
-    }
-
-    $len = strlen((string) $name);
-    $v = new Valitron\Validator(array('name' => $name, 'count' => $len));
+    $v = new Valitron\Validator(array('name' => $urls['name'], 'count' => strlen((string) $urls['name'])));
     $v->rule('required', 'name')->rule('lengthMax', 'count.*', 255)->rule('url', 'name');
     if ($v->validate()) {
         $parseUrl = parse_url($urls['name']);
         $urls['name'] = $parseUrl['scheme'] . '://' . $parseUrl['host'];
 
         $serachName = $dataBase->searchName($urls);
+        var_dump($serachName);
 
         if (count($serachName) !== 0) {
             $url = $router->urlFor('urlsId', ['id' => $serachName[0]['id']]);
@@ -98,24 +114,7 @@ $app->get('/', function ($request, $response) use ($router) {
     }
     $params = ['errors' => $error];
     return $this->get('renderer')->render($response, 'index.phtml', $params);
-})->setName('/');
-
-$app->get('/urls/{id}', function ($request, $response, $args) {
-    $id = $args['id'];
-    $messages = $messages = $this->get('flash')->getMessages();
-
-    $pdo = Connection::get()->connect();
-    $dataBase = new PgsqlData($pdo);
-    $dataFromDB = $dataBase->findUrlForId($args);
-    $dataCheckUrl = $dataBase->selectAllByIdFromCheck($args);
-
-    $params = ['id' => $dataFromDB[0]['id'],
-                'name' => $dataFromDB[0]['name'],
-                'created_at' => $dataFromDB[0]['created_at'],
-                'flash' => $messages,
-                'urls' => $dataCheckUrl];
-    return $this->get('renderer')->render($response, 'urlsId.phtml', $params);
-})->setName('urlsId');
+});
 
 $app->get('/urls', function ($request, $response) {
     $pdo = Connection::get()->connect();
