@@ -136,8 +136,6 @@ $app->post('/urls/{url_id}/checks', function ($request, $response, $args) use ($
         $res = $client->request('GET', $name[0]['name']);
         $checkUrl['status'] = $res->getStatusCode();
         $this->get('flash')->addMessage('success', 'Страница успешно проверена');
-        $checkUrl['time'] = Carbon::now();
-        $dataBase->insertInTableChecks($checkUrl);
     } catch (TransferException $e) {
         $this->get('flash')->addMessage('failure', 'Произошла ошибка при проверке, не удалось подключиться');
         $url = $router->urlFor('urlsId', ['id' => $url_id]);
@@ -166,6 +164,9 @@ $app->post('/urls/{url_id}/checks', function ($request, $response, $args) use ($
     } else {
         $checkUrl['meta'] = '';
     }
+
+    $checkUrl['time'] = Carbon::now();
+    $dataBase->insertInTableChecks($checkUrl);
 
     $url = $router->urlFor('urlsId', ['id' => $url_id]);
     return $response->withRedirect($url);
