@@ -14,7 +14,7 @@ class PgsqlData
      * инициализация объекта с объектом \PDO
      * @тип параметра $pdo
      */
-    public function __construct(object $pdo)
+    public function __construct($pdo)
     {
         $this->pdo = $pdo;
     }
