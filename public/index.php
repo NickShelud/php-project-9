@@ -62,6 +62,8 @@ $app->get('/', function ($request, $response) use ($router) {
 
     if (isset($urls['name'])) {
         $name = $url['name'];
+    } else {
+        $name = '';
     }
 
     $len = strlen((string) $name);
