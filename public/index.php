@@ -49,12 +49,12 @@ $router = $app->getRouteCollector()->getRouteParser();
 
 $app->get('/router', function ($request, $response) use ($router) {
     $router->urlFor('/');
-    $router->urlFor('urlsId', ['id' => 4]);
+    $router->urlFor('urlsId', ['id' => '']);
     $router->urlFor('urls');
     return $this->get('renderer')->render($response, 'index.phtml');
 });
 
-$app->get('/', function ($request, $response) use ($router) {
+$app->get('/', function ($request, $response) {
     $params = [];
     return $this->get('renderer')->render($response, 'index.phtml', $params);
 })->setName('/');

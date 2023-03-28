@@ -17,7 +17,7 @@ class CreateTable
      * инициализация объекта с объектом \PDO
      * @тип параметра $pdo
      */
-    public function __construct($pdo)
+    public function __construct((string) $pdo)
     {
         $this->pdo = $pdo;
     }

@@ -14,7 +14,7 @@ class PgsqlData
      * инициализация объекта с объектом \PDO
      * @тип параметра $pdo
      */
-    public function __construct($pdo)
+    public function __construct(string $pdo)
     {
         $this->pdo = $pdo;
     }
@@ -23,7 +23,7 @@ class PgsqlData
      * создание таблиц
      */
 
-    public function query($sql, $params = [])
+    public function query(string $sql, array $params = [])
     {
         // Подготовка запроса
         $stmt = $this->pdo->prepare($sql);
@@ -42,18 +42,18 @@ class PgsqlData
         return $stmt->fetchAll($this->pdo::FETCH_ASSOC);
     }
 
-    public function insertInTable($name)
+    public function insertInTable(array $name)
     {
         return $this->query('INSERT INTO urls(name, created_at) VALUES(:name, :time) RETURNING id', $name);
     }
 
-    public function insertInTableChecks($url_id)
+    public function insertInTableChecks(array $url_id)
     {
         return $this->query('INSERT INTO urls_checks(url_id, status_code, title, h1, description, created_at) 
         VALUES(:url_id, :status, :title, :h1, :meta, :time)', $url_id);
     }
 
-    public function findUrlForId($id)
+    public function findUrlForId(array $id)
     {
         return $this->query('SELECT * FROM urls WHERE id = :id', $id);
     }
@@ -78,17 +78,17 @@ class PgsqlData
         return $this->query('SELECT * FROM urls_checks');
     }
 
-    public function searchName($name)
+    public function searchName(array $name)
     {
         return $this->query('SELECT id FROM urls WHERE name = :name', $name);
     }
 
-    public function selectAllByIdFromCheck($id)
+    public function selectAllByIdFromCheck(array $id)
     {
         return $this->query('SELECT * FROM urls_checks WHERE url_id = :id ORDER BY id DESC', $id);
     }
 
-    public function selectNameByIdFromUrls($id)
+    public function selectNameByIdFromUrls(array $id)
     {
         return $this->query('SELECT name FROM urls WHERE id = :url_id', $id);
     }
