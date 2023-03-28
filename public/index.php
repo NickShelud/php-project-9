@@ -59,8 +59,8 @@ $app->get('/', function ($request, $response) use ($router) {
     $pdo = Connection::get()->connect();
     $dataBase = new PgsqlData($pdo);
     $error = [];
-
-    $v = new Valitron\Validator(array('name' => $urls['name'], 'count' => strlen($urls['name'])));
+    $len = strlen($urls['name']);
+    $v = new Valitron\Validator(array('name' => $urls['name'], 'count' => $len));
     $v->rule('required', 'name')->rule('lengthMax', 'count.*', 255)->rule('url', 'name');
     if ($v->validate()) {
         $parseUrl = parse_url($urls['name']);
@@ -77,7 +77,6 @@ $app->get('/', function ($request, $response) use ($router) {
         $isertInTable = $dataBase->insertInTable($urls);
 
         $id = $dataBase->getLastId();
-        var_dump($id);
 
         $url = $router->urlFor('urlsId', ['id' => $id[0]['max']]);
         $this->get('flash')->addMessage('success', 'Страница успешно добавлена');
