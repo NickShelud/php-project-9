@@ -7,7 +7,7 @@ install:
 	composer install
 
 lint:
-	composer exec --verbose phpcs -- --standard=PSR12 public src
+	composer exec --verbose phpcs -- --standard=PSR12 public src app
 
 restart:
 	sudo service postgresql restart
