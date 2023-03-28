@@ -170,7 +170,7 @@ $app->post('/urls/{url_id}/checks', function ($request, $response, $args) use ($
     $dataBase->insertInTableChecks($checkUrl);
 
     $url = $router->urlFor('urlsId', ['id' => $url_id]);
-    return $response->withRedirect($url);
+    return $response->withStatus(422)->withRedirect($url);
 });
 
 $app->run();
