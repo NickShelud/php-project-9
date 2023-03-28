@@ -59,8 +59,13 @@ $app->get('/', function ($request, $response) use ($router) {
     $pdo = Connection::get()->connect();
     $dataBase = new PgsqlData($pdo);
     $error = [];
-    $len = strlen((string) $urls['name']);
-    $v = new Valitron\Validator(array('name' => $urls['name'], 'count' => $len));
+
+    if (isset($urls['name'])) {
+        $name = $url['name'];
+    }
+
+    $len = strlen((string) $name);
+    $v = new Valitron\Validator(array('name' => $name, 'count' => $len));
     $v->rule('required', 'name')->rule('lengthMax', 'count.*', 255)->rule('url', 'name');
     if ($v->validate()) {
         $parseUrl = parse_url($urls['name']);
