@@ -112,7 +112,7 @@ $app->post('/urls', function ($request, $response) use ($router) {
         }
     }
     $params = ['errors' => $error];
-    return $this->get('renderer')->render($response, 'index.phtml', $params);
+    return $this->get('renderer')->render($response->withStatus(422), 'index.phtml', $params);
 });
 
 $app->get('/urls', function ($request, $response) {
@@ -138,7 +138,7 @@ $app->post('/urls/{url_id}/checks', function ($request, $response, $args) use ($
         $this->get('flash')->addMessage('success', 'Страница успешно проверена');
     } catch (TransferException $e) {
         $this->get('flash')->addMessage('failure', 'Произошла ошибка при проверке, не удалось подключиться');
-        $url = $router->urlFor('urlsId', ['id' => $url_id], 422);
+        $url = $router->urlFor('urlsId', ['id' => $url_id]);
         //$newResponse = $response->withStatus(422);
         return $response->withRedirect($url);
     }
