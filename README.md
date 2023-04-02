@@ -5,8 +5,3 @@
 
 ### links and description
 [Page Analyzer](https://php-project-9-production-3927.up.railway.app/) – сайт, который анализирует указанные страницы на SEO пригодность по аналогии с [PageSpeed Insights](https://pagespeed.web.dev/)
-
-![home page](https://disk.yandex.ru/client/disk?idApp=client&dialog=slider&idDialog=%2Fdisk%2FhomePage.png)
-![insert](https://disk.yandex.ru/client/disk?idApp=client&dialog=slider&idDialog=%2Fdisk%2Finsert.png)
-![check web site](https://disk.yandex.ru/client/disk?idApp=client&dialog=slider&idDialog=%2Fdisk%2Fcheck.png)
-![all urls](https://disk.yandex.ru/client/disk?idApp=client&dialog=slider&idDialog=%2Fdisk%2Furls.png)
