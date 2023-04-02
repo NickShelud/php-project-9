@@ -6,7 +6,7 @@
 ### links and description
 [Page Analyzer](https://php-project-9-production-3927.up.railway.app/) – сайт, который анализирует указанные страницы на SEO пригодность по аналогии с [PageSpeed Insights](https://pagespeed.web.dev/)
 
-(../screen/homePage.png)
-(../screen/insert.png)
-(../screen/check.png)
-(../screen/urls.png)
+![home page](../screen/homePage.png)
+![insert](../screen/insert.png)
+![check web site](../screen/check.png)
+![all urls](../screen/urls.png)
