@@ -1,3 +1,4 @@
 /vendor/
+/screen/
 nixpacks-vVERSION-amd64.deb
 .phpunit.result.cache
