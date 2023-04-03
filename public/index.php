@@ -18,7 +18,7 @@ use GuzzleHttp\Exception\TransferException;
 use DiDom\Document;
 use Carbon\Carbon;
 
-if (isset($_SESSION['start'])) {
+if (!isset($_SESSION['start'])) {
     $pdo = Connection::get()->connect();
     $dropTables = new PgsqlData($pdo);
     $urlsCheck = $dropTables->query('DROP TABLE urls_check');
