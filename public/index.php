@@ -153,8 +153,8 @@ $app->post('/urls/{url_id}/checks', function ($request, $response, $args) use ($
     }
 
     $document = new Document($name[0]['name'], true);
-    $title = optional($document->find('title'))->text();
-    $h1 = optional($document->find('h1'))->text();
+    $title = optional($document->first('title'))->text();
+    $h1 = optional($document->first('h1'))->text();
     $meta = optional($document->first('meta[name="description"]'))->getAttribute('content');
 
     if ($title !== null) {
