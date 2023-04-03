@@ -20,8 +20,10 @@ use Carbon\Carbon;
 
 if (isset($_SESSION['start'])) {
     $pdo = Connection::get()->connect();
-    $truncateTables = new PgsqlData($pdo);
-    $urls = $truncateTables->query('DROP TABLE urls CASCADE');
+    $dropTables = new PgsqlData($pdo);
+    $urlsCheck = $dropTables->query('DROP TABLE urls_check');
+    $urls = $dropTables->query('DROP TABLE urls CASCADE');
+
     $_SESSION['start'] = true;
 }
 
