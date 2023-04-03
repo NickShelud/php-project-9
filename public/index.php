@@ -21,7 +21,7 @@ use Carbon\Carbon;
 if (!isset($_SESSION['start'])) {
     $pdo = Connection::get()->connect();
     $dropTables = new PgsqlData($pdo);
-    $urlsCheck = $dropTables->query('DROP TABLE urls_check');
+    $urlsCheck = $dropTables->query('DROP TABLE urls_checks');
     $urls = $dropTables->query('DROP TABLE urls CASCADE');
 
     $_SESSION['start'] = true;
