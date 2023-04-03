@@ -158,21 +158,21 @@ $app->post('/urls/{url_id}/checks', function ($request, $response, $args) use ($
     $meta = optional($document->first('meta[name="description"]'))->getAttribute('content');
 
     if ($title !== null) {
-        $title = mb_substr($title, 0, 252) . '...'
+        $title = mb_substr($title, 0, 252) . '...';
         $checkUrl['title'] = $title;
     } else {
         $checkUrl['title'] = '';
     }
 
     if ($h1 !== null) {
-        $h1 = mb_substr($h1, 0, 252) . '...'
+        $h1 = mb_substr($h1, 0, 252) . '...';
         $checkUrl['h1'] = $h1;
     } else {
         $checkUrl['h1'] = '';
     }
 
     if ($meta !== null) {
-        $meta = mb_substr($meta, 0, 252) . '...'
+        $meta = mb_substr($meta, 0, 252) . '...';
         $checkUrl['meta'] = $meta;
     } else {
         $checkUrl['meta'] = '';
