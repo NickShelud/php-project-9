@@ -20,7 +20,7 @@ use Carbon\Carbon;
 
 session_start();
 
-if (!isset($_SESSION['start'])) {
+if (isset($_SESSION['start'])) {
     $pdo = Connection::get()->connect();
     $truncateTables = new PgsqlData($pdo);
     $urls = $truncateTables->query('DROP TABLE urls CASCADE');
