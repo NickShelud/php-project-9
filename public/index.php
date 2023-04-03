@@ -20,6 +20,15 @@ use Carbon\Carbon;
 
 session_start();
 
+if (!isset($_SESSION['start'])) {
+    $pdo = Connection::get()->connect();
+    $truncateTables = new PgsqlData($pdo);
+    $urls = $truncateTables->query('DELETE TABLE urls CASCADE');
+    $urlsCheck = $truncateTables->query('DELETE TABLE urls_check');
+    
+    $_SESSION['start'] = true;
+}
+
 try {
     $pdo = Connection::get()->connect();
     $tableCreator = new CreateTable($pdo);
