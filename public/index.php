@@ -22,8 +22,6 @@ if (isset($_SESSION['start'])) {
     $pdo = Connection::get()->connect();
     $truncateTables = new PgsqlData($pdo);
     $urls = $truncateTables->query('DROP TABLE urls CASCADE');
-    //$urlsCheck = $truncateTables->query('DROP TABLE urls_check');
-    
     $_SESSION['start'] = true;
 }
 
