@@ -157,21 +157,21 @@ $app->post('/urls/{url_id}/checks', function ($request, $response, $args) use ($
     $h1 = optional($document->first('h1'))->text();
     $meta = optional($document->first('meta[name="description"]'))->getAttribute('content');
 
-    if ($title !== null and $title !== '') {
+    if ($title !== null) {
         $title = mb_substr($title, 0, 255);
         $checkUrl['title'] = $title;
     } else {
         $checkUrl['title'] = '';
     }
 
-    if ($h1 !== null and $h1 !== '') {
+    if ($h1 !== null) {
         $h1 = mb_substr($h1, 0, 255);
         $checkUrl['h1'] = $h1;
     } else {
         $checkUrl['h1'] = '';
     }
 
-    if ($meta !== null and $meta !== '') {
+    if ($meta !== null) {
         $meta = mb_substr($meta, 0, 255);
         $checkUrl['meta'] = $meta;
     } else {
