@@ -20,15 +20,6 @@ use Carbon\Carbon;
 
 session_start();
 
-if (!isset($_SESSION['start'])) {
-    $pdo = Connection::get()->connect();
-    $dropTables = new PgsqlData($pdo);
-    $urls = $dropTables->query('TRUNCATE TABLE urls RESTART IDENTITY CASCADE');
-    $urlsCheck = $dropTables->query('TRUNCATE TABLE urls_checks RESTART IDENTITY CASCADE');
-
-    $_SESSION['start'] = true;
-}
-
 try {
     $pdo = Connection::get()->connect();
     $tableCreator = new CreateTable($pdo);
