@@ -23,8 +23,8 @@ session_start();
 if (!isset($_SESSION['start'])) {
     $pdo = Connection::get()->connect();
     $dropTables = new PgsqlData($pdo);
-    $urlsCheck = $dropTables->query('TRUNCATE TABLE urls_checks RESTART IDENTITY CASCADE');
     $urls = $dropTables->query('TRUNCATE TABLE urls RESTART IDENTITY');
+    $urlsCheck = $dropTables->query('TRUNCATE TABLE urls_checks RESTART IDENTITY CASCADE');
 
     $_SESSION['start'] = true;
 }
