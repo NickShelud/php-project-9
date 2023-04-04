@@ -20,14 +20,14 @@ use Carbon\Carbon;
 
 session_start();
 
-if (!isset($_SESSION['start'])) {
-    $pdo = Connection::get()->connect();
-    $dropTables = new PgsqlData($pdo);
-    $urlsCheck = $dropTables->query('TRUNCATE TABLE urls_checks');
-    $urls = $dropTables->query('TRUNCATE TABLE urls CASCADE');
-
-    $_SESSION['start'] = true;
-}
+//if (!isset($_SESSION['start'])) {
+//    $pdo = Connection::get()->connect();
+//    $dropTables = new PgsqlData($pdo);
+//    $urlsCheck = $dropTables->query('TRUNCATE TABLE urls_checks');
+//    $urls = $dropTables->query('TRUNCATE TABLE urls');
+//
+//    $_SESSION['start'] = true;
+//}
 
 try {
     $pdo = Connection::get()->connect();
