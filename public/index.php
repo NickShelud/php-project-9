@@ -138,9 +138,9 @@ $app->post('/urls/{url_id}/checks', function ($request, $response, $args) use ($
         //$this->get('flash')->addMessage('success', 'Страница успешно проверена');
     } catch (TransferException $e) {
         $this->get('flash')->addMessage('failure', 'Произошла ошибка при проверке, не удалось подключиться');
-        $url = $router->urlFor('urlsId', ['id' => $url_id]);
+        //$url = $router->urlFor('urlsId', ['id' => $url_id]);
         //$newResponse = $response->withStatus(422);
-        return $response->withRedirect($url);
+        //return $response->withRedirect($url, 302);
     }
 
     $document = new Document($name[0]['name']);
@@ -182,7 +182,7 @@ $app->post('/urls/{url_id}/checks', function ($request, $response, $args) use ($
     //$dataBase->insertInTableChecks($checkUrl);
 
     $url = $router->urlFor('urlsId', ['id' => $url_id]);
-    return $response->withRedirect($url);
+    return $response->withRedirect($url, 302);
 });
 
 $app->run();
