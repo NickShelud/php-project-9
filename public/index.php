@@ -129,7 +129,7 @@ $app->post('/urls/{url_id}/checks', function ($request, $response, $args) use ($
     $dataBase = new PgsqlData($pdo);
 
     $checkUrl['url_id'] = $args['url_id'];
-    $client = new Client();
+    $client = new GuzzleHttp\Client();
     $name = $dataBase->selectNameByIdFromUrls($checkUrl);
 
     try {
