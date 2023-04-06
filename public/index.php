@@ -132,19 +132,19 @@ $app->post('/urls/{url_id}/checks', function ($request, $response, $args) use ($
     $name = $dataBase->selectNameByIdFromUrls($checkUrl);
 
     try {
-        $client = new Client(['base_uri' => $name[0]['name']]);
-        $res = $client->request('GET', '/');
+        $client = new Client();
+        $res = $client->request('GET', $name[0]['name']);
         $checkUrl['status'] = $res->getStatusCode();
-        var_dump($checkUrl['status']);
+        //var_dump($checkUrl['status']);
         //$this->get('flash')->addMessage('success', 'Страница успешно проверена');
     } catch (TransferException $e) {
-        $this->get('flash')->addMessage('failure', $res->getStatusCode());
+        $this->get('flash')->addMessage('failure', 'Произошла ошибка при проверке, не удалось подключиться');
         //$url = $router->urlFor('urlsId', ['id' => $url_id]);
         //$newResponse = $response->withStatus(422);
         //return $response->withRedirect($url, 302);
     }
 
-    $document = new Document($name[0]['name']);
+    $document = new Document($name[0]['name'], true);
     $title = optional($document->first('title'))->text();
     $h1 = optional($document->first('h1'))->text();
     $meta = optional($document->first('meta[name="description"]'))->getAttribute('content');
