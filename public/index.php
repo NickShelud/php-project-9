@@ -175,7 +175,7 @@ $app->post('/urls/{url_id}/checks', function ($request, $response, $args) use ($
     if (isset($checkUrl['status'])) {
         try {
             $dataBase->insertInTableChecks($checkUrl);
-        } catch (\PDO Exception $e) {
+        } catch (\PDOException $e) {
             echo $e->getMessage();
         }
         $this->get('flash')->addMessage('success', 'Страница успешно проверена');
