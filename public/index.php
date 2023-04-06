@@ -130,6 +130,7 @@ $app->post('/urls/{url_id}/checks', function ($request, $response, $args) use ($
 
     $checkUrl['url_id'] = $args['url_id'];
     $name = $dataBase->selectNameByIdFromUrls($checkUrl);
+    var_dump($name);
 
     try {
         $client = new Client(['base_uri' => $name[0]['name']]);
