@@ -13,7 +13,7 @@ use Slim\Flash\Messages;
 use Valitron\Validator;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7;
-use GuzzleHttp\Exception\ClientException;
+use Psr\Http\Message\ResponseInterface;
 use GuzzleHttp\Exception\TransferException;
 use DiDom\Document;
 use Carbon\Carbon;
@@ -129,22 +129,19 @@ $app->post('/urls/{url_id}/checks', function ($request, $response, $args) use ($
     $dataBase = new PgsqlData($pdo);
 
     $checkUrl['url_id'] = $args['url_id'];
-    $client = new GuzzleHttp\Client();
     $name = $dataBase->selectNameByIdFromUrls($checkUrl);
-    $res = $client->request('GET', $name[0]['name']);
-    $checkUrl['status'] = $res->getStatusCode();
-    $this->get('flash')->addMessage('success', 'Страница успешно проверена');
 
-   //try {
-   //    $res = $client->request('GET', $name[0]['name']);
-   //    $checkUrl['status'] = $res->getStatusCode();
-   //    $this->get('flash')->addMessage('success', 'Страница успешно проверена');
-   //} catch (TransferException $e) {
-   //    $this->get('flash')->addMessage('failure', 'Произошла ошибка при проверке, не удалось подключиться');
-   //    $url = $router->urlFor('urlsId', ['id' => $url_id]);
-   //    //$newResponse = $response->withStatus(422);
-   //    return $response->withRedirect($url);
-   //}
+    try {
+        $client = new Client(['base_uri' => $name[0]['name']]);
+        $res = $client->request('GET', '/');
+        $checkUrl['status'] = $res->getStatusCode();
+        $this->get('flash')->addMessage('success', 'Страница успешно проверена');
+    } catch (TransferException $e) {
+        $this->get('flash')->addMessage('failure', 'Произошла ошибка при проверке, не удалось подключиться');
+        $url = $router->urlFor('urlsId', ['id' => $url_id]);
+        //$newResponse = $response->withStatus(422);
+        return $response->withRedirect($url);
+    }
 
     $document = new Document($name[0]['name'], true);
     $title = optional($document->first('title'))->text();
