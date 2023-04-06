@@ -138,7 +138,7 @@ $app->post('/urls/{url_id}/checks', function ($request, $response, $args) use ($
         var_dump($checkUrl['status']);
         //$this->get('flash')->addMessage('success', 'Страница успешно проверена');
     } catch (TransferException $e) {
-        $this->get('flash')->addMessage('failure', $checkUrl['status']);
+        $this->get('flash')->addMessage('failure', $res->getStatusCode());
         //$url = $router->urlFor('urlsId', ['id' => $url_id]);
         //$newResponse = $response->withStatus(422);
         //return $response->withRedirect($url, 302);
