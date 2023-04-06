@@ -131,17 +131,20 @@ $app->post('/urls/{url_id}/checks', function ($request, $response, $args) use ($
     $checkUrl['url_id'] = $args['url_id'];
     $client = new GuzzleHttp\Client();
     $name = $dataBase->selectNameByIdFromUrls($checkUrl);
+    $res = $client->request('GET', $name[0]['name']);
+    $checkUrl['status'] = $res->getStatusCode();
+    $this->get('flash')->addMessage('success', 'Страница успешно проверена');
 
-    try {
-        $res = $client->request('GET', $name[0]['name']);
-        $checkUrl['status'] = $res->getStatusCode();
-        $this->get('flash')->addMessage('success', 'Страница успешно проверена');
-    } catch (TransferException $e) {
-        $this->get('flash')->addMessage('failure', 'Произошла ошибка при проверке, не удалось подключиться');
-        $url = $router->urlFor('urlsId', ['id' => $url_id]);
-        //$newResponse = $response->withStatus(422);
-        return $response->withRedirect($url);
-    }
+   //try {
+   //    $res = $client->request('GET', $name[0]['name']);
+   //    $checkUrl['status'] = $res->getStatusCode();
+   //    $this->get('flash')->addMessage('success', 'Страница успешно проверена');
+   //} catch (TransferException $e) {
+   //    $this->get('flash')->addMessage('failure', 'Произошла ошибка при проверке, не удалось подключиться');
+   //    $url = $router->urlFor('urlsId', ['id' => $url_id]);
+   //    //$newResponse = $response->withStatus(422);
+   //    return $response->withRedirect($url);
+   //}
 
     $document = new Document($name[0]['name'], true);
     $title = optional($document->first('title'))->text();
