@@ -144,7 +144,7 @@ $app->post('/urls/{url_id}/checks', function ($request, $response, $args) use ($
         //return $response->withRedirect($url);
     }
 
-    $document = new Document($name[0]['name'], true);
+    $document = new Document($name[0]['name']);
     $title = optional($document->first('title'))->text();
     $h1 = optional($document->first('h1'))->text();
     $meta = optional($document->first('meta[name="description"]'))->getAttribute('content');
