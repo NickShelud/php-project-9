@@ -135,11 +135,12 @@ $app->post('/urls/{url_id}/checks', function ($request, $response, $args) use ($
         $client = new Client();
         $res = $client->request('GET', $name[0]['name']);
         $checkUrl['status'] = $res->getStatusCode();
-        //var_dump($checkUrl['status']);
-        //$this->get('flash')->addMessage('success', 'Страница успешно проверена');
-    } catch (RequestException $e) {
-        $checkUrl['status'] = 403;
-        $this->get('flash')->addMessage('failure', 'Проверка была выполнена успешно, но сервер ответил с ошибкой');
+        if (is_null($res)) {
+            $checkUrl('status') = 403;
+            throw RequestException('Проверка была выполнена успешно, но сервер ответил с ошибкой')
+        }
+    } catch (TransferException $e) {
+        $this->get('flash')->addMessage('failure', 'Произошла ошибка при проверке, не удалось подключиться');
         $url = $router->urlFor('urlsId', ['id' => $url_id]);
         return $response->withRedirect($url);
     }
