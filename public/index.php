@@ -135,15 +135,9 @@ $app->post('/urls/{url_id}/checks', function ($request, $response, $args) use ($
         $client = new Client();
         $res = $client->request('GET', $name[0]['name']);
         $checkUrl['status'] = $res->getStatusCode();
-        if ($checkUrl['status'] == 403) {
-            $this->get('flash')->addMessage('success', 'Проверка была выполнена успешно, но сервер ответил с ошибкой');
-        } elseif ($checkUrl['status'] == 200) {
-            $this->get('flash')->addMessage('success', 'Страница успешно проверена');
-        }
+        var_dump($checkUrl['status']);
     } catch (TransferException $e) {
         $this->get('flash')->addMessage('failure', 'Произошла ошибка при проверке, не удалось подключиться');
-        $url = $router->urlFor('urlsId', ['id' => $url_id]);
-        return $response->withRedirect($url);
     }
 
     $document = new Document($name[0]['name'], true);
