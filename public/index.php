@@ -142,10 +142,6 @@ $app->post('/urls/{url_id}/checks', function ($request, $response, $args) use ($
         $this->get('flash')->addMessage('failure', 'Проверка была выполнена успешно, но сервер ответил с ошибкой');
         $url = $router->urlFor('urlsId', ['id' => $url_id]);
         return $response->withRedirect($url);
-    } catch (ConnectException $e) {
-        $this->get('flash')->addMessage('failure', 'Произошла ошибка при проверке, не удалось подключиться');
-        $url = $router->urlFor('urlsId', ['id' => $url_id]);
-        return $response->withRedirect($url);
     }
 
     $document = new Document($name[0]['name'], true);
