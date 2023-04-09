@@ -140,14 +140,12 @@ $app->post('/urls/{url_id}/checks', function ($request, $response, $args) use ($
     } catch (ClientException $e) {
         $checkUrl['status'] = 403;
         $this->get('flash')->addMessage('failure', 'Проверка была выполнена успешно, но сервер ответил с ошибкой');
-        //$url = $router->urlFor('urlsId', ['id' => $url_id]);
-        //$newResponse = $response->withStatus(422);
-        //return $response->withRedirect($url, 302);
+        $url = $router->urlFor('urlsId', ['id' => $url_id]);
+        return $response->withRedirect($url);
     } catch (TransferException $e) {
         $this->get('flash')->addMessage('failure', 'Произошла ошибка при проверке, не удалось подключиться');
         $url = $router->urlFor('urlsId', ['id' => $url_id]);
-        $newResponse = $response->withStatus(422);
-        return $response->withRedirect($url, 302);
+        return $response->withRedirect($url);
     }
 
     $document = new Document($name[0]['name'], true);
