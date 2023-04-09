@@ -133,29 +133,23 @@ $app->post('/urls/{url_id}/checks', function ($request, $response, $args) use ($
     try {
         $client = new Client();
         $res = $client->request('GET', $name[0]['name']);
-    } catch (TransferException $e) {
-        $checkUrl['status'] = $e->getResponse()->getStatusCode();
-        $checkUrl['title'] = 'Доступ ограничен: проблема с IP';
-        $checkUrl['h1'] = 'Доступ ограничен: проблема с IP';
-        $checkUrl['meta'] = 'Доступ ограничен: проблема с IP';
-        $checkUrl['time'] = Carbon::now();
-        $dataBase->insertInTableChecks($checkUrl);
-        $this->get('flash')->addMessage('failure', 'Проверка была выполнена успешно, но сервер ответил с ошибкой');
-        $url = $router->urlFor('urlsId', ['id' => $url_id]);
-        return $response->withRedirect($url);
-    }
-
-    try {
-        $client = new Client();
-        $res = $client->request('GET', $name[0]['name']);
         $checkUrl['status'] = $res->getStatusCode();
-        var_dump($checkUrl['status']. 'hhhh');
     } catch (TransferException $e) {
-        $this->get('flash')->addMessage('failure', 'Произошла ошибка при проверке, не удалось подключиться');
+        if ($e->getResponse()->getStatusCode() === 403) {
+            $checkUrl['status'] = $e->getResponse()->getStatusCode();
+            $checkUrl['title'] = 'Доступ ограничен: проблема с IP';
+            $checkUrl['h1'] = 'Доступ ограничен: проблема с IP';
+            $checkUrl['meta'] = 'Доступ ограничен: проблема с IP';
+            $checkUrl['time'] = Carbon::now();
+            $dataBase->insertInTableChecks($checkUrl);
+            $this->get('flash')->addMessage('failure', 'Проверка была выполнена успешно, но сервер ответил с ошибкой');
+        } else {
+            $this->get('flash')->addMessage('failure', 'Произошла ошибка при проверке, не удалось подключиться');
+        }
         $url = $router->urlFor('urlsId', ['id' => $url_id]);
         return $response->withRedirect($url);
     }
-    var_dump($checkUrl['status']. 'hhhh');
+    
     $document = new Document($name[0]['name'], true);
     $title = optional($document->first('title'))->text();
     $h1 = optional($document->first('h1'))->text();
