@@ -136,7 +136,7 @@ $app->post('/urls/{url_id}/checks', function ($request, $response, $args) use ($
         $res = $client->request('GET', $name[0]['name']);
         $checkUrl['status'] = $res->getStatusCode();
         if (is_null($res)) {
-            $checkUrl('status') = 403;
+            $checkUrl['status'] = 403;
             throw RequestException('Проверка была выполнена успешно, но сервер ответил с ошибкой');
         }
     } catch (TransferException $e) {
