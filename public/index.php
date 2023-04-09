@@ -140,6 +140,7 @@ $app->post('/urls/{url_id}/checks', function ($request, $response, $args) use ($
             throw RequestException('Проверка была выполнена успешно, но сервер ответил с ошибкой');
         }
     } catch (TransferException $e) {
+        $checkUrl['status'] = 403
         $this->get('flash')->addMessage('failure', 'Произошла ошибка при проверке, не удалось подключиться');
         $url = $router->urlFor('urlsId', ['id' => $url_id]);
         return $response->withRedirect($url);
