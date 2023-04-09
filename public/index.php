@@ -135,7 +135,7 @@ $app->post('/urls/{url_id}/checks', function ($request, $response, $args) use ($
         $client = new Client();
         $res = $client->request('GET', $name[0]['name']);
         $checkUrl['status'] = $res->getStatusCode();
-        var_dump($checkUrl['status']);
+        //var_dump($checkUrl['status']);
     } catch (TransferException $e) {
         $this->get('flash')->addMessage('failure', 'Произошла ошибка при проверке, не удалось подключиться');
     }
