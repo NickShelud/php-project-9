@@ -135,12 +135,12 @@ $app->post('/urls/{url_id}/checks', function ($request, $response, $args) use ($
         $client = new Client();
         $res = $client->request('GET', $name[0]['name']);
         $checkUrl['status'] = $res->getStatusCode();
-        if (is_null($res)) {
-            $checkUrl['status'] = 403;
-            throw RequestException('Проверка была выполнена успешно, но сервер ответил с ошибкой');
+        if ($checkUrl['status'] == 403) {
+            $this->get('flash')->addMessage('success', 'Проверка была выполнена успешно, но сервер ответил с ошибкой');
+        } elseif ($checkUrl['status'] == 200) {
+            $this->get('flash')->addMessage('success', 'Страница успешно проверена');
         }
     } catch (TransferException $e) {
-        $checkUrl['status'] = 403;
         $this->get('flash')->addMessage('failure', 'Произошла ошибка при проверке, не удалось подключиться');
         $url = $router->urlFor('urlsId', ['id' => $url_id]);
         return $response->withRedirect($url);
@@ -174,15 +174,15 @@ $app->post('/urls/{url_id}/checks', function ($request, $response, $args) use ($
 
     $checkUrl['time'] = Carbon::now();
 
-    if (isset($checkUrl['status'])) {
-        try {
-            $dataBase->insertInTableChecks($checkUrl);
-        } catch (\PDOException $e) {
-            echo $e->getMessage();
-        }
-        $this->get('flash')->addMessage('success', 'Страница успешно проверена');
-    }
-    //$dataBase->insertInTableChecks($checkUrl);
+    //if (isset($checkUrl['status'])) {
+    //    try {
+    //        $dataBase->insertInTableChecks($checkUrl);
+    //    } catch (\PDOException $e) {
+    //        echo $e->getMessage();
+    //    }
+    //    $this->get('flash')->addMessage('success', 'Страница успешно проверена');
+    //}
+    $dataBase->insertInTableChecks($checkUrl);
 
     $url = $router->urlFor('urlsId', ['id' => $url_id]);
     return $response->withRedirect($url, 302);
