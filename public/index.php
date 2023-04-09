@@ -137,7 +137,7 @@ $app->post('/urls/{url_id}/checks', function ($request, $response, $args) use ($
         $checkUrl['status'] = $res->getStatusCode();
         if (is_null($res)) {
             $checkUrl('status') = 403;
-            throw RequestException('Проверка была выполнена успешно, но сервер ответил с ошибкой')
+            throw RequestException('Проверка была выполнена успешно, но сервер ответил с ошибкой');
         }
     } catch (TransferException $e) {
         $this->get('flash')->addMessage('failure', 'Произошла ошибка при проверке, не удалось подключиться');
