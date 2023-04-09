@@ -137,7 +137,7 @@ $app->post('/urls/{url_id}/checks', function ($request, $response, $args) use ($
         $checkUrl['status'] = $res->getStatusCode();
         //var_dump($checkUrl['status']);
         //$this->get('flash')->addMessage('success', 'Страница успешно проверена');
-    } catch (RequestException $e) {
+    } catch (ClientException $e) {
         $checkUrl['status'] = 403;
         $this->get('flash')->addMessage('failure', 'Проверка была выполнена успешно, но сервер ответил с ошибкой');
         $url = $router->urlFor('urlsId', ['id' => $url_id]);
