@@ -148,8 +148,10 @@ $app->post('/urls/{url_id}/checks', function ($request, $response, $args) use ($
         }
         $url = $router->urlFor('urlsId', ['id' => $url_id]);
         return $response->withRedirect($url);
+    } catch (ConnectException $e) {
+        $this->get('flash')->addMessage('failure', 'Произошла ошибка при проверке, не удалось подключиться');
     }
-    
+
     $document = new Document($name[0]['name'], true);
     $title = optional($document->first('title'))->text();
     $h1 = optional($document->first('h1'))->text();
