@@ -145,6 +145,9 @@ $app->post('/urls/{url_id}/checks', function ($request, $response, $args) use ($
         //return $response->withRedirect($url, 302);
     } catch (TransferException $e) {
         $this->get('flash')->addMessage('failure', 'Произошла ошибка при проверке, не удалось подключиться');
+        $url = $router->urlFor('urlsId', ['id' => $url_id]);
+        $newResponse = $response->withStatus(422);
+        return $response->withRedirect($url, 302);
     }
 
     $document = new Document($name[0]['name'], true);
