@@ -20,7 +20,6 @@ use GuzzleHttp\Exception\ConnectException;
 use DiDom\Document;
 use Carbon\Carbon;
 
-session_start();
 
 if (!isset($_SESSION['start'])) {
     $pdo = Connection::get()->connect();
@@ -30,6 +29,8 @@ if (!isset($_SESSION['start'])) {
 
     $_SESSION['start'] = true;
 }
+
+session_start();
 
 try {
     $pdo = Connection::get()->connect();
