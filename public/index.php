@@ -136,6 +136,7 @@ $app->post('/urls/{url_id}/checks', function ($request, $response, $args) use ($
     try {
         $client = new Client();
         $res = $client->request('GET', $name[0]['name']);
+        $checkUrl['status'] = $res->getStatusCode();
     } catch (ConnectException $e) {
         $this->get('flash')->addMessage('failure', 'Произошла ошибка при проверке, не удалось подключиться');
         $url = $router->urlFor('urlsId', ['id' => $url_id]);
