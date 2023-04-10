@@ -29,7 +29,11 @@
                 <?php foreach ($data as $item): ?>
                     <tr>
                         <td><?= isset($item['id']) ? htmlspecialchars($item['id']) : '' ?></td>
-                        <td><a href="/urls/<?=(int)$item['id']?>"><?= isset($item['name']) ? htmlspecialchars($item['name']) : '' ?></a></td>
+                        <td>
+                            <a href="/urls/<?=(int)$item['id']?>">
+                                <?= isset($item['name']) ? htmlspecialchars($item['name']) : '' ?>
+                            </a>
+                        </td>
                         <td><?= isset($item['created_at']) ? htmlspecialchars($item['created_at']) : '' ?></td>
                         <td><?= isset($item['status_code']) ? htmlspecialchars($item['status_code']) : '' ?></td>
                     </tr>
