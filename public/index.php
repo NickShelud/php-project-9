@@ -14,11 +14,22 @@ use Valitron\Validator;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7;
 use Psr\Http\Message\ResponseInterface;
+use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\TransferException;
+use GuzzleHttp\Exception\ConnectException;
 use DiDom\Document;
 use Carbon\Carbon;
 
 session_start();
+
+if (!isset($_SESSION['start'])) {
+    $pdo = Connection::get()->connect();
+    $dropTables = new PgsqlData($pdo);
+    $urls = $dropTables->query('TRUNCATE TABLE urls RESTART IDENTITY CASCADE');
+    $urlsCheck = $dropTables->query('TRUNCATE TABLE urls_checks RESTART IDENTITY CASCADE');
+
+    $_SESSION['start'] = true;
+}
 
 try {
     $pdo = Connection::get()->connect();
@@ -130,10 +141,14 @@ $app->post('/urls/{url_id}/checks', function ($request, $response, $args) use ($
 
     $checkUrl['url_id'] = $args['url_id'];
     $name = $dataBase->selectNameByIdFromUrls($checkUrl);
+
     try {
         $client = new Client();
         $res = $client->request('GET', $name[0]['name']);
-        $checkUrl['status'] = $res->getStatusCode();
+    } catch (ConnectException $e) {
+        $this->get('flash')->addMessage('failure', 'Произошла ошибка при проверке, не удалось подключиться');
+        $url = $router->urlFor('urlsId', ['id' => $url_id]);
+        return $response->withRedirect($url);
     } catch (TransferException $e) {
         if ($e->getResponse()->getStatusCode() === 403) {
             $checkUrl['status'] = $e->getResponse()->getStatusCode();
@@ -142,14 +157,12 @@ $app->post('/urls/{url_id}/checks', function ($request, $response, $args) use ($
             $checkUrl['meta'] = 'Доступ ограничен: проблема с IP';
             $checkUrl['time'] = Carbon::now();
             $dataBase->insertInTableChecks($checkUrl);
-            $this->get('flash')->addMessage('failure', 'Проверка была выполнена успешно, но сервер ответил с ошибкой');
+            $this->get('flash')->addMessage('warning', 'Проверка была выполнена успешно, но сервер ответил с ошибкой');
         } else {
             $this->get('flash')->addMessage('failure', 'Произошла ошибка при проверке, не удалось подключиться');
         }
         $url = $router->urlFor('urlsId', ['id' => $url_id]);
         return $response->withRedirect($url);
-    } catch (ConnectException $e) {
-        $this->get('flash')->addMessage('failure', 'Произошла ошибка при проверке, не удалось подключиться');
     }
 
     $document = new Document($name[0]['name'], true);
