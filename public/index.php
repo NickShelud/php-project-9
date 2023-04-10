@@ -141,7 +141,7 @@ $app->post('/urls/{url_id}/checks', function ($request, $response, $args) use ($
         $this->get('flash')->addMessage('failure', 'Произошла ошибка при проверке, не удалось подключиться');
         $url = $router->urlFor('urlsId', ['id' => $url_id]);
         return $response->withRedirect($url);
-    } catch (TransferException $e) {
+    } catch (ClientException $e) {
         if ($e->getResponse()->getStatusCode() === 403) {
             $checkUrl['status'] = $e->getResponse()->getStatusCode();
             $checkUrl['title'] = 'Доступ ограничен: проблема с IP';
@@ -150,11 +150,9 @@ $app->post('/urls/{url_id}/checks', function ($request, $response, $args) use ($
             $checkUrl['time'] = Carbon::now();
             $dataBase->insertInTableChecks($checkUrl);
             $this->get('flash')->addMessage('warning', 'Проверка была выполнена успешно, но сервер ответил с ошибкой');
-        } else {
-            $this->get('flash')->addMessage('failure', 'Произошла ошибка при проверке, не удалось подключиться');
-        }
-        $url = $router->urlFor('urlsId', ['id' => $url_id]);
-        return $response->withRedirect($url);
+            $url = $router->urlFor('urlsId', ['id' => $url_id]);
+            return $response->withRedirect($url);
+        } 
     }
 
     $document = new Document($name[0]['name'], true);
