@@ -21,7 +21,7 @@
             <div class="alert alert-success" role="alert"><?= htmlspecialchars($flash['success'][0]) ?></div>
         <?php elseif(isset($flash['failure'][0])): ?>
             <div class="alert alert-danger" role="alert"><?= htmlspecialchars($flash['failure'][0]) ?></div>
-        <?php elseif(isset($flash['failure'][0])): ?>
+        <?php elseif(isset($flash['warning'][0])): ?>
             <div class="alert alert-warning" role="alert"><?= htmlspecialchars($flash['warning'][0]) ?></div>
         <?php endif ?>
     <main class="container mt-3">

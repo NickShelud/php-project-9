@@ -152,7 +152,7 @@ $app->post('/urls/{url_id}/checks', function ($request, $response, $args) use ($
             $this->get('flash')->addMessage('warning', 'Проверка была выполнена успешно, но сервер ответил с ошибкой');
             $url = $router->urlFor('urlsId', ['id' => $url_id]);
             return $response->withRedirect($url);
-        } 
+        }
     }
 
     $document = new Document($name[0]['name'], true);
