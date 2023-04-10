@@ -20,16 +20,6 @@ use GuzzleHttp\Exception\ConnectException;
 use DiDom\Document;
 use Carbon\Carbon;
 
-
-if (!isset($_SESSION['start'])) {
-    $pdo = Connection::get()->connect();
-    $dropTables = new PgsqlData($pdo);
-    $urls = $dropTables->query('TRUNCATE TABLE urls RESTART IDENTITY CASCADE');
-    $urlsCheck = $dropTables->query('TRUNCATE TABLE urls_checks RESTART IDENTITY CASCADE');
-
-    $_SESSION['start'] = true;
-}
-
 session_start();
 
 try {
