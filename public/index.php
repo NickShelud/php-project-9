@@ -142,7 +142,7 @@ $app->post('/urls/{url_id}/checks', function ($request, $response, $args) use ($
         $url = $router->urlFor('urlsId', ['id' => $url_id]);
         return $response->withRedirect($url);
     } catch (ClientException $e) {
-        if ($e->getResponse()->getStatusCode() === 403) {
+        if ($e->getResponse()->getStatusCode() != 200) {
             $checkUrl['status'] = $e->getResponse()->getStatusCode();
             $checkUrl['title'] = 'Доступ ограничен: проблема с IP';
             $checkUrl['h1'] = 'Доступ ограничен: проблема с IP';
@@ -160,21 +160,21 @@ $app->post('/urls/{url_id}/checks', function ($request, $response, $args) use ($
     $h1 = optional($document->first('h1'))->text();
     $meta = optional($document->first('meta[name="description"]'))->getAttribute('content');
 
-    if ($title !== null) {
+    if ($title?) {
         $title = mb_substr($title, 0, 255);
         $checkUrl['title'] = $title;
     } else {
         $checkUrl['title'] = '';
     }
 
-    if ($h1 !== null) {
+    if ($h1?) {
         $h1 = mb_substr($h1, 0, 255);
         $checkUrl['h1'] = $h1;
     } else {
         $checkUrl['h1'] = '';
     }
 
-    if ($meta !== null) {
+    if ($meta?) {
         $meta = mb_substr($meta, 0, 255);
         $checkUrl['meta'] = $meta;
     } else {
