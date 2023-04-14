@@ -22,14 +22,12 @@ use Carbon\Carbon;
 
 session_start();
 
-// try {
-//     $pdo = Connection::get()->connect();
-//     $tableCreator = new CreateTable($pdo);
-//     $tables = $tableCreator->createTables();
-//     $tablesCheck = $tableCreator->createTableWithChecks();
-// } catch (\PDOException $e) {
-//     echo $e->getMessage();
-// }
+// Александр, привет, можешь, пожалуйста, оценить мое решение с выносом SQL  команд в отдельный файл
+// с одной стороны так меньше кода в index.php и ,как мне кажется, код стал чище, но функции в psqlAction нельзя 
+// переиспользовать. Так же такое решение будет порождать больше функций в psqlAction с увеличением запросов к бд. 
+// Возможно мне стоит придумать более лакончный способ запросов в бд
+
+// P.S комент удалю со следущим коммитом
 
 $container = new Container();
 $container->set('renderer', function () {
@@ -45,9 +43,6 @@ $container->set('connection', function () {
     return $pdo;
 });
 
-$pdo = Connection::get()->connect();
-$dataBase = new PgsqlActions($pdo);
-
 $app = AppFactory::createFromContainer($container);
 $app->add(MethodOverrideMiddleware::class);
 $app->addErrorMiddleware(true, true, true);
@@ -62,14 +57,9 @@ $app->get('/router', function ($request, $response) use ($router) {
 });
 
 $app->get('/createTables', function ($request, $response) {
-    try {
-        $tableCreator = new CreateTable($this->get('connection'));
-        $tables = $tableCreator->createTables();
-        $tablesCheck = $tableCreator->createTableWithChecks();
-    } catch (\PDOException $e) {
-        echo $e->getMessage();
-    }
-
+    $tableCreator = new CreateTable($this->get('connection'));
+    $tables = $tableCreator->createTables();
+    $tablesCheck = $tableCreator->createTableWithChecks();
     return $response;
 });
 
@@ -82,7 +72,6 @@ $app->get('/urls/{id}', function ($request, $response, $args) {
     $id = $args['id'];
     $messages = $messages = $this->get('flash')->getMessages();
 
-    //$pdo = Connection::get()->connect();
     $dataBase = new PgsqlActions($this->get('connection'));
     $dataFromDB = $dataBase->findUrlForId($args);
     $dataCheckUrl = $dataBase->selectAllByIdFromCheck($args);
@@ -97,9 +86,16 @@ $app->get('/urls/{id}', function ($request, $response, $args) {
 
 $app->post('/urls', function ($request, $response) use ($router) {
     $urls = $request->getParsedBodyParam('url');
-    $pdo = Connection::get()->connect();
-    $dataBase = new PgsqlActions($pdo);
+    $dataBase = new PgsqlActions($this->get('connection'));
     $error = [];
+
+    try {
+        $tableCreator = new CreateTable($this->get('connection'));
+        $tables = $tableCreator->createTables();
+        $tablesCheck = $tableCreator->createTableWithChecks();
+    } catch (\PDOException $e) {
+        echo $e->getMessage();
+    }
 
     $v = new Valitron\Validator(array('name' => $urls['name'], 'count' => strlen((string) $urls['name'])));
     $v->rule('required', 'name')->rule('lengthMax', 'count.*', 255)->rule('url', 'name');
@@ -135,8 +131,7 @@ $app->post('/urls', function ($request, $response) use ($router) {
 });
 
 $app->get('/urls', function ($request, $response) {
-    $pdo = Connection::get()->connect();
-    $dataBase = new PgsqlActions($pdo);
+    $dataBase = new PgsqlActions($this->get('connection'));
     $dataFromDB = $dataBase->getAll();
     $params = ['data' => $dataFromDB];
     return $this->get('renderer')->render($response, 'urls.phtml', $params);
