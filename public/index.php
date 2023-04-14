@@ -61,7 +61,7 @@ $app->get('/router', function ($request, $response) use ($router) {
     return $this->get('renderer')->render($response, 'index.phtml');
 });
 
-$app->get('/createTables'), function ($request, $response) {
+$app->get('/createTables', function ($request, $response) {
     try {
         $tableCreator = new CreateTable($this->get('connection'));
         $tables = $tableCreator->createTables()->createTableWithChecks();
@@ -72,7 +72,7 @@ $app->get('/createTables'), function ($request, $response) {
     }
 
     return $response;
-}
+});
 
 $app->get('/', function ($request, $response) {
     $params = [];
