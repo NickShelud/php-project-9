@@ -22,14 +22,14 @@ use Carbon\Carbon;
 
 session_start();
 
-try {
-    $pdo = Connection::get()->connect();
-    $tableCreator = new CreateTable($pdo);
-    $tables = $tableCreator->createTables();
-    $tablesCheck = $tableCreator->createTableWithChecks();
-} catch (\PDOException $e) {
-    echo $e->getMessage();
-}
+// try {
+//     $pdo = Connection::get()->connect();
+//     $tableCreator = new CreateTable($pdo);
+//     $tables = $tableCreator->createTables();
+//     $tablesCheck = $tableCreator->createTableWithChecks();
+// } catch (\PDOException $e) {
+//     echo $e->getMessage();
+// }
 
 $container = new Container();
 $container->set('renderer', function () {
@@ -38,6 +38,17 @@ $container->set('renderer', function () {
 
 $container->set('flash', function () {
     return new Slim\Flash\Messages();
+});
+
+$container->set('connection', function () {
+    try {
+        $pdo = Connection::get()->connect();
+        $tableCreator = new CreateTable($pdo);
+        $tables = $tableCreator->createTables();
+        $tablesCheck = $tableCreator->createTableWithChecks();
+    } catch (\PDOException $e) {
+        echo $e->getMessage();
+    }
 });
 
 $pdo = Connection::get()->connect();
@@ -156,26 +167,26 @@ $app->post('/urls/{url_id}/checks', function ($request, $response, $args) use ($
     }
 
     $document = new Document($name[0]['name'], true);
-    $title = optional($document->first('title'))->text();
-    $h1 = optional($document->first('h1'))->text();
-    $meta = optional($document->first('meta[name="description"]'))->getAttribute('content');
+    $title = optional($document->first('title'));
+    $h1 = optional($document->first('h1'));
+    $meta = optional($document->first('meta[name="description"]'));
 
-    if ($title?->) {
-        $title = mb_substr($title, 0, 255);
+    if ($title?->text()) {
+        $title = mb_substr($title->text(), 0, 255);
         $checkUrl['title'] = $title;
     } else {
         $checkUrl['title'] = '';
     }
 
-    if ($h1?->) {
-        $h1 = mb_substr($h1, 0, 255);
+    if ($h1?->text()) {
+        $h1 = mb_substr($h1->text(), 0, 255);
         $checkUrl['h1'] = $h1;
     } else {
         $checkUrl['h1'] = '';
     }
 
-    if ($meta?->) {
-        $meta = mb_substr($meta, 0, 255);
+    if ($meta?->getAttribute('content')) {
+        $meta = mb_substr($meta->getAttribute('content'), 0, 255);
         $checkUrl['meta'] = $meta;
     } else {
         $checkUrl['meta'] = '';
