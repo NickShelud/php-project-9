@@ -45,15 +45,6 @@ $container->set('connection', function () {
     return $pdo;
 });
 
-try {
-    $tableCreator = new CreateTable($this->get('connection'));
-    $tables = $tableCreator->createTables()->createTableWithChecks();
-    return $tables;
-    // $tablesCheck = $tableCreator->createTableWithChecks();
-} catch (\PDOException $e) {
-    echo $e->getMessage();
-}
-
 $pdo = Connection::get()->connect();
 $dataBase = new PgsqlActions($pdo);
 
@@ -72,6 +63,16 @@ $app->get('/router', function ($request, $response) use ($router) {
 
 $app->get('/', function ($request, $response) {
     $params = [];
+
+    try {
+        $tableCreator = new CreateTable($this->get('connection'));
+        $tables = $tableCreator->createTables()->createTableWithChecks();
+        return $tables;
+        // $tablesCheck = $tableCreator->createTableWithChecks();
+    } catch (\PDOException $e) {
+        echo $e->getMessage();
+    }
+    
     return $this->get('renderer')->render($response, 'index.phtml', $params);
 })->setName('/');
 
