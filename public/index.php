@@ -82,8 +82,8 @@ $app->get('/urls/{id}', function ($request, $response, $args) {
     $id = $args['id'];
     $messages = $messages = $this->get('flash')->getMessages();
 
-    $pdo = Connection::get()->connect();
-    $dataBase = new PgsqlActions($pdo);
+    //$pdo = Connection::get()->connect();
+    $dataBase = new PgsqlActions($this->get('connection'));
     $dataFromDB = $dataBase->findUrlForId($args);
     $dataCheckUrl = $dataBase->selectAllByIdFromCheck($args);
 
