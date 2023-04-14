@@ -41,16 +41,18 @@ $container->set('flash', function () {
 });
 
 $container->set('connection', function () {
-    try {
-        $pdo = Connection::get()->connect();
-        $tableCreator = new CreateTable($pdo);
-        $tables = $tableCreator->createTables()->createTableWithChecks();
-        return $tables;
-        // $tablesCheck = $tableCreator->createTableWithChecks();
-    } catch (\PDOException $e) {
-        echo $e->getMessage();
-    }
+    $pdo = Connection::get()->connect();
+    return $pdo;
 });
+
+try {
+    $tableCreator = new CreateTable($this->get('connection'));
+    $tables = $tableCreator->createTables()->createTableWithChecks();
+    return $tables;
+    // $tablesCheck = $tableCreator->createTableWithChecks();
+} catch (\PDOException $e) {
+    echo $e->getMessage();
+}
 
 $pdo = Connection::get()->connect();
 $dataBase = new PgsqlActions($pdo);
