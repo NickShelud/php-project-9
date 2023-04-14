@@ -61,9 +61,7 @@ $app->get('/router', function ($request, $response) use ($router) {
     return $this->get('renderer')->render($response, 'index.phtml');
 });
 
-$app->get('/', function ($request, $response) {
-    $params = [];
-
+$app->get('/createTables'), function ($request, $response) {
     try {
         $tableCreator = new CreateTable($this->get('connection'));
         $tables = $tableCreator->createTables()->createTableWithChecks();
@@ -72,7 +70,12 @@ $app->get('/', function ($request, $response) {
     } catch (\PDOException $e) {
         echo $e->getMessage();
     }
-    
+
+    return $response;
+}
+
+$app->get('/', function ($request, $response) {
+    $params = [];
     return $this->get('renderer')->render($response, 'index.phtml', $params);
 })->setName('/');
 
