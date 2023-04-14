@@ -2,7 +2,7 @@
 
 namespace Hexlet\Code;
 
-class PgsqlData
+class PgsqlActions
 {
     /**
      * объект PDO

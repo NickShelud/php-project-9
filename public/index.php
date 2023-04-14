@@ -8,7 +8,7 @@ use DI\Container;
 use Slim\Middleware\MethodOverrideMiddleware;
 use Hexlet\Code\Connection;
 use Hexlet\Code\CreateTable;
-use Hexlet\Code\PgsqlData;
+use Hexlet\Code\PgsqlActions;
 use Slim\Flash\Messages;
 use Valitron\Validator;
 use GuzzleHttp\Client;
@@ -44,15 +44,16 @@ $container->set('connection', function () {
     try {
         $pdo = Connection::get()->connect();
         $tableCreator = new CreateTable($pdo);
-        $tables = $tableCreator->createTables();
-        $tablesCheck = $tableCreator->createTableWithChecks();
+        $tables = $tableCreator->createTables()->createTableWithChecks();
+        return $tables;
+        // $tablesCheck = $tableCreator->createTableWithChecks();
     } catch (\PDOException $e) {
         echo $e->getMessage();
     }
 });
 
 $pdo = Connection::get()->connect();
-$dataBase = new PgsqlData($pdo);
+$dataBase = new PgsqlActions($pdo);
 
 $app = AppFactory::createFromContainer($container);
 $app->add(MethodOverrideMiddleware::class);
@@ -77,7 +78,7 @@ $app->get('/urls/{id}', function ($request, $response, $args) {
     $messages = $messages = $this->get('flash')->getMessages();
 
     $pdo = Connection::get()->connect();
-    $dataBase = new PgsqlData($pdo);
+    $dataBase = new PgsqlActions($pdo);
     $dataFromDB = $dataBase->findUrlForId($args);
     $dataCheckUrl = $dataBase->selectAllByIdFromCheck($args);
 
@@ -92,7 +93,7 @@ $app->get('/urls/{id}', function ($request, $response, $args) {
 $app->post('/urls', function ($request, $response) use ($router) {
     $urls = $request->getParsedBodyParam('url');
     $pdo = Connection::get()->connect();
-    $dataBase = new PgsqlData($pdo);
+    $dataBase = new PgsqlActions($pdo);
     $error = [];
 
     $v = new Valitron\Validator(array('name' => $urls['name'], 'count' => strlen((string) $urls['name'])));
@@ -130,7 +131,7 @@ $app->post('/urls', function ($request, $response) use ($router) {
 
 $app->get('/urls', function ($request, $response) {
     $pdo = Connection::get()->connect();
-    $dataBase = new PgsqlData($pdo);
+    $dataBase = new PgsqlActions($pdo);
     $dataFromDB = $dataBase->getAll();
     $params = ['data' => $dataFromDB];
     return $this->get('renderer')->render($response, 'urls.phtml', $params);
@@ -139,7 +140,7 @@ $app->get('/urls', function ($request, $response) {
 $app->post('/urls/{url_id}/checks', function ($request, $response, $args) use ($router) {
     $url_id = $args['url_id'];
     $pdo = Connection::get()->connect();
-    $dataBase = new PgsqlData($pdo);
+    $dataBase = new PgsqlActions($pdo);
 
     $checkUrl['url_id'] = $args['url_id'];
     $name = $dataBase->selectNameByIdFromUrls($checkUrl);
