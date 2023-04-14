@@ -64,9 +64,8 @@ $app->get('/router', function ($request, $response) use ($router) {
 $app->get('/createTables', function ($request, $response) {
     try {
         $tableCreator = new CreateTable($this->get('connection'));
-        $tables = $tableCreator->createTables()->createTableWithChecks();
-        return $tables;
-        // $tablesCheck = $tableCreator->createTableWithChecks();
+        $tables = $tableCreator->createTables();
+        $tablesCheck = $tableCreator->createTableWithChecks();
     } catch (\PDOException $e) {
         echo $e->getMessage();
     }
