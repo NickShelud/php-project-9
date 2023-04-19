@@ -7,7 +7,7 @@ use Slim\Factory\AppFactory;
 use DI\Container;
 use Slim\Middleware\MethodOverrideMiddleware;
 use Hexlet\Code\Connection;
-use Hexlet\Code\CreateTable;
+use Hexlet\Code\CreatorTables;
 use Hexlet\Code\PgsqlActions;
 use Slim\Flash\Messages;
 use Valitron\Validator;
@@ -21,13 +21,6 @@ use DiDom\Document;
 use Carbon\Carbon;
 
 session_start();
-
-// Александр, привет, можешь, пожалуйста, оценить мое решение с выносом SQL  команд в отдельный файл
-// с одной стороны так меньше кода в index.php и ,как мне кажется, код стал чище, но функции в psqlAction нельзя
-// переиспользовать. Так же такое решение будет порождать больше функций в psqlAction с увеличением запросов к бд.
-// Возможно мне стоит придумать более лакончный способ запросов в бд
-
-// P.S комент удалю со следущим коммитом
 
 $container = new Container();
 $container->set('renderer', function () {
@@ -57,7 +50,7 @@ $app->get('/router', function ($request, $response) use ($router) {
 });
 
 $app->get('/createTables', function ($request, $response) {
-    $tableCreator = new CreateTable($this->get('connection'));
+    $tableCreator = new CreatorTables($this->get('connection'));
     $tables = $tableCreator->createTables();
     $tablesCheck = $tableCreator->createTableWithChecks();
     return $response;
@@ -73,8 +66,8 @@ $app->get('/urls/{id}', function ($request, $response, $args) {
     $messages = $messages = $this->get('flash')->getMessages();
 
     $dataBase = new PgsqlActions($this->get('connection'));
-    $dataFromDB = $dataBase->findUrlForId($args);
-    $dataCheckUrl = $dataBase->selectAllByIdFromCheck($args);
+    $dataFromDB = $dataBase->query('SELECT * FROM urls WHERE id = :id', $args);
+    $dataCheckUrl = $dataBase->query('SELECT * FROM urls_checks WHERE url_id = :id ORDER BY id DESC', $args);
 
     $params = ['id' => $dataFromDB[0]['id'],
                 'name' => $dataFromDB[0]['name'],
@@ -90,7 +83,7 @@ $app->post('/urls', function ($request, $response) use ($router) {
     $error = [];
 
     try {
-        $tableCreator = new CreateTable($this->get('connection'));
+        $tableCreator = new CreatorTables($this->get('connection'));
         $tables = $tableCreator->createTables();
         $tablesCheck = $tableCreator->createTableWithChecks();
     } catch (\PDOException $e) {
@@ -103,7 +96,7 @@ $app->post('/urls', function ($request, $response) use ($router) {
         $parseUrl = parse_url($urls['name']);
         $urls['name'] = $parseUrl['scheme'] . '://' . $parseUrl['host'];
 
-        $serachName = $dataBase->searchName($urls);
+        $serachName = $dataBase->query('SELECT id FROM urls WHERE name = :name', $urls);
 
         if (count($serachName) !== 0) {
             $url = $router->urlFor('urlsId', ['id' => $serachName[0]['id']]);
@@ -111,9 +104,9 @@ $app->post('/urls', function ($request, $response) use ($router) {
             return $response->withRedirect($url);
         }
         $urls['time'] = Carbon::now();
-        $isertInTable = $dataBase->insertInTable($urls);
+        $isertInTable = $dataBase->query('INSERT INTO urls(name, created_at) VALUES(:name, :time) RETURNING id', $urls);
 
-        $id = $dataBase->getLastId();
+        $id = $dataBase->query('SELECT MAX(id) FROM urls');
 
         $url = $router->urlFor('urlsId', ['id' => $id[0]['max']]);
         $this->get('flash')->addMessage('success', 'Страница успешно добавлена');
@@ -132,7 +125,11 @@ $app->post('/urls', function ($request, $response) use ($router) {
 
 $app->get('/urls', function ($request, $response) {
     $dataBase = new PgsqlActions($this->get('connection'));
-    $dataFromDB = $dataBase->getAll();
+    $dataFromDB = $dataBase->query('SELECT MAX(urls_checks.created_at) AS created_at, urls_checks.status_code, urls.id, urls.name 
+    FROM urls 
+    LEFT OUTER JOIN urls_checks ON urls_checks.url_id = urls.id 
+    GROUP BY urls_checks.url_id, urls.id, urls_checks.status_code 
+    ORDER BY urls.id DESC');
     $params = ['data' => $dataFromDB];
     return $this->get('renderer')->render($response, 'urls.phtml', $params);
 })->setName('urls');
@@ -143,7 +140,7 @@ $app->post('/urls/{url_id}/checks', function ($request, $response, $args) use ($
     $dataBase = new PgsqlActions($pdo);
 
     $checkUrl['url_id'] = $args['url_id'];
-    $name = $dataBase->selectNameByIdFromUrls($checkUrl);
+    $name = $dataBase->query('SELECT name FROM urls WHERE id = :url_id', $checkUrl);
 
     try {
         $client = new Client();
@@ -160,7 +157,8 @@ $app->post('/urls/{url_id}/checks', function ($request, $response, $args) use ($
             $checkUrl['h1'] = 'Доступ ограничен: проблема с IP';
             $checkUrl['meta'] = 'Доступ ограничен: проблема с IP';
             $checkUrl['time'] = Carbon::now();
-            $dataBase->insertInTableChecks($checkUrl);
+            $dataBase->query('INSERT INTO urls_checks(url_id, status_code, title, h1, description, created_at) 
+            VALUES(:url_id, :status, :title, :h1, :meta, :time)', $checkUrl);
             $this->get('flash')->addMessage('warning', 'Проверка была выполнена успешно, но сервер ответил с ошибкой');
             $url = $router->urlFor('urlsId', ['id' => $url_id]);
             return $response->withRedirect($url);
@@ -197,7 +195,8 @@ $app->post('/urls/{url_id}/checks', function ($request, $response, $args) use ($
 
     if (isset($checkUrl['status'])) {
         try {
-            $dataBase->insertInTableChecks($checkUrl);
+            $dataBase->query('INSERT INTO urls_checks(url_id, status_code, title, h1, description, created_at) 
+            VALUES(:url_id, :status, :title, :h1, :meta, :time)', $checkUrl);
         } catch (\PDOException $e) {
             echo $e->getMessage();
         }

@@ -5,7 +5,7 @@ namespace Hexlet\Code;
 /**
  * Создание в PostgreSQL таблицы из демонстрации PHP
  */
-class CreateTable
+class CreatorTables
 {
     /**
      * объект PDO

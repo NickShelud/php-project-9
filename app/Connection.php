@@ -65,8 +65,4 @@ final class Connection
 
         return static::$conn;
     }
-
-    protected function __construct()
-    {
-    }
 }
