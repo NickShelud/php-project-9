@@ -125,11 +125,13 @@ $app->post('/urls', function ($request, $response) use ($router) {
 
 $app->get('/urls', function ($request, $response) {
     $dataBase = new PgsqlActions($this->get('connection'));
-    $dataFromDB = $dataBase->query('SELECT MAX(urls_checks.created_at) AS created_at, urls_checks.status_code, urls.id, urls.name 
-    FROM urls 
-    LEFT OUTER JOIN urls_checks ON urls_checks.url_id = urls.id 
-    GROUP BY urls_checks.url_id, urls.id, urls_checks.status_code 
-    ORDER BY urls.id DESC');
+    $dataFromDB = $dataBase->query(
+        'SELECT MAX(urls_checks.created_at) AS created_at, urls_checks.status_code, urls.id, urls.name 
+        FROM urls 
+        LEFT OUTER JOIN urls_checks ON urls_checks.url_id = urls.id 
+        GROUP BY urls_checks.url_id, urls.id, urls_checks.status_code 
+        ORDER BY urls.id DESC'
+    );
     $params = ['data' => $dataFromDB];
     return $this->get('renderer')->render($response, 'urls.phtml', $params);
 })->setName('urls');
